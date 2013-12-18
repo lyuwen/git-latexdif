@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # Main author: Matthieu Moy <Matthieu.Moy@imag.fr> (2012, 2013)
 # (See the Git history for other contributors)
@@ -46,6 +46,7 @@ usage () {
     cat << EOF
 Usage: $(basename $0) [options] OLD [NEW]
        $(basename $0) [options] OLD --
+       $(basename $0) [options] -- OLD
 Call latexdiff on two Git revisions of a file.
 
 OLD and NEW are Git revision identifiers. NEW defaults to HEAD.
@@ -93,6 +94,7 @@ Options:
                              (enabled by default, disable with --whole-tree)
     --whole-tree          checkout the whole tree (contrast with --subtree)
     --ignore-makefile     ignore the Makefile, build as though it doesn't exist
+    -*                    other options are passed directly to latexdiff
 EOF
 }
 
@@ -142,6 +144,7 @@ uselatexmk=
 latexopt=
 ln_untracked=0
 quiet=0
+latexdiffopt=()
 
 while test $# -ne 0; do
     case "$1" in
@@ -230,6 +233,19 @@ while test $# -ne 0; do
 	    shift
 	    tmpdir_prefix="$1"
 	    ;;
+        -*)
+            if test "$1" = "--" ; then
+                if test -z "$new" ; then
+                    new=$1
+                else
+                    echo "Bad argument $1"
+                    usage
+                    exit 1
+                fi
+            else
+                latexdiffopt=($1 $latexdiffopt)
+            fi
+            ;;
         *)
 	    if test -z "$1" ; then
 		echo "Empty string not allowed as argument"
@@ -393,9 +409,9 @@ do
     verbose_done
 done
 
-verbose "Running latexdiff --flatten old/$main new/$main > ./diff.tex"
+verbose "Running latexdiff $latexdiffopt --flatten old/$main new/$main > ./diff.tex"
 
-latexdiff --flatten old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
+latexdiff $latexdiffopt --flatten old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
 
 verbose "mv ./diff.tex new/$main"
 
