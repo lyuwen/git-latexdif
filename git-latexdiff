@@ -243,7 +243,7 @@ while test $# -ne 0; do
                     exit 1
                 fi
             else
-                latexdiffopt+=($1)
+                latexdiffopt+=("$1")
             fi
             ;;
         *)
@@ -411,7 +411,7 @@ done
 
 verbose "Running latexdiff ${latexdiffopt[@]} --flatten old/$main new/$main > ./diff.tex"
 
-latexdiff ${latexdiffopt[@]} --flatten old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
+latexdiff "${latexdiffopt[@]}" --flatten old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
 
 verbose_done
 
