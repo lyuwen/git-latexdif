@@ -413,6 +413,8 @@ verbose "Running latexdiff ${latexdiffopt[@]} --flatten old/$main new/$main > ./
 
 latexdiff ${latexdiffopt[@]} --flatten old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
 
+verbose_done
+
 verbose "mv ./diff.tex new/$main"
 
 mv -f new/"$main" new/"$main.orig"
