@@ -64,6 +64,7 @@ Options:
                             (default if -o is not used)
     --pdf-viewer <cmd>    use <cmd> to view the PDF file (default: \$PDFVIEWER)
     --no-cleanup          don't cleanup temp dir after running
+    --no-flatten          don't provide latexdiff the --flatten option
     --cleanup MODE        Cleanup temporary files according to MODE:
 
                            - keeppdf (default): keep only the
@@ -139,6 +140,7 @@ output=
 initial_dir=$PWD
 tmpdir_prefix="/tmp"
 prepare_cmd=
+flatten=1
 subtree=1
 uselatexmk=
 latexopt=
@@ -182,6 +184,9 @@ while test $# -ne 0; do
                     ;;
             esac
             ;;
+    "--no-flatten")
+        flatten=0
+        ;;
 	"--ignore-makefile")
 	    ignoremake=1
 	    ;;
@@ -409,9 +414,13 @@ do
     verbose_done
 done
 
-verbose "Running latexdiff ${latexdiffopt[@]} --flatten old/$main new/$main > ./diff.tex"
+if test "$flatten" = 1; then
+  latexdiffopt+=("--flatten")
+fi
 
-latexdiff "${latexdiffopt[@]}" --flatten old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
+verbose "Running latexdiff ${latexdiffopt[@]} old/$main new/$main > ./diff.tex"
+
+latexdiff "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
 
 verbose_done
 
