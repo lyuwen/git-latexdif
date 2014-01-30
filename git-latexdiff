@@ -184,9 +184,9 @@ while test $# -ne 0; do
                     ;;
             esac
             ;;
-    "--no-flatten")
-        flatten=0
-        ;;
+	"--no-flatten")
+            flatten=0
+            ;;
 	"--ignore-makefile")
 	    ignoremake=1
 	    ;;
@@ -378,13 +378,13 @@ verbose "Checking out old and new version"
 
 cd old || die "Cannot cd to old/"
 if test "$ln_untracked" = 1; then
-  ln -s "$initial_dir"/* .
+    ln -s "$initial_dir"/* .
 fi
 
 if test "$subtree" = 1; then
-  checkoutroot=$git_prefix
+    checkoutroot=$git_prefix
 else
-  checkoutroot="."
+    checkoutroot="."
 fi
 
 # Checkout a subtree, without touching the index ("git checkout" would)
@@ -392,7 +392,7 @@ fi
 verbose_progress
 cd ../new || die "Cannot cd to new/"
 if test "$ln_untracked" = 1; then
-  ln -s "$initial_dir"/* .
+    ln -s "$initial_dir"/* .
 fi
 if test "$new" != "--"; then
     # if new == "--" then diff working dir (already there thanks to ln
@@ -409,13 +409,13 @@ do
     verbose "Running preparation command $prepare_cmd in $dir/$git_prefix"
     ( cd "$dir/$git_prefix/" && log_cmd prepare.log eval "$prepare_cmd" )
     if test ! -f "$dir/$main"; then
-      die "$prepare_cmd did not produce $dir/$main."
+	die "$prepare_cmd did not produce $dir/$main."
     fi
     verbose_done
 done
 
 if test "$flatten" = 1; then
-  latexdiffopt+=("--flatten")
+    latexdiffopt+=("--flatten")
 fi
 
 verbose "Running latexdiff ${latexdiffopt[@]} old/$main new/$main > ./diff.tex"
