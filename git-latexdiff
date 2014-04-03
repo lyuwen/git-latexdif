@@ -64,7 +64,7 @@ Options:
                             (default if -o is not used)
     --pdf-viewer <cmd>    use <cmd> to view the PDF file (default: \$PDFVIEWER)
     --no-cleanup          don't cleanup temp dir after running
-    --no-flatten          don't provide latexdiff the --flatten option
+    --no-flatten          don't call latexpand to flatten the document
     --cleanup MODE        Cleanup temporary files according to MODE:
 
                            - keeppdf (default): keep only the
@@ -96,6 +96,8 @@ Options:
     --whole-tree          checkout the whole tree (contrast with --subtree)
     --ignore-makefile     ignore the Makefile, build as though it doesn't exist
     -*                    other options are passed directly to latexdiff
+    --bbl                 shortcut to flatten a bbl file of the same name as the project
+    --latexpand           pass options to lastexpand (should be last option specified)
 EOF
 }
 
@@ -147,6 +149,9 @@ latexopt=
 ln_untracked=0
 quiet=0
 latexdiffopt=()
+latexpand=()
+workingdir=()
+bbl=0
 
 while test $# -ne 0; do
     case "$1" in
@@ -224,6 +229,13 @@ while test $# -ne 0; do
         "--latexmk")
             uselatexmk=1
             ;;
+	"--latexpand")
+	    shift
+	    latexpand=$1
+	    ;;
+	"--bbl")
+	    bbl=1
+	    ;;
 	"--latexopt")
 	    shift
 	    latexopt=$1
@@ -414,25 +426,39 @@ do
     verbose_done
 done
 
-if test "$flatten" = 1; then
-    latexdiffopt+=("--flatten")
-fi
-
-verbose "Running latexdiff ${latexdiffopt[@]} old/$main new/$main > ./diff.tex"
-
-latexdiff "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
-
-verbose_done
-
-verbose "mv ./diff.tex new/$main"
-
-mv -f new/"$main" new/"$main.orig"
-mv -f diff.tex new/"$main"
-
-verbose_done
-
 mainbase=$(basename "$main" .tex)
 maindir=$(dirname "$main")
+
+if test "$bbl" = 1; then
+	oldbbl=("--expand-bbl old/"$mainbase".bbl")
+	newbbl=("--expand-bbl new/"$mainbase".bbl")
+else
+	oldbbl=("")
+	newbbl=("")
+fi
+
+# Create flattened documents and keep for debugging
+if test "$flatten" = 1; then
+    verbose "Running latexpand"
+    latexpand old/"$main" > old/"$mainbase"-fl.tex "${latexpand[@]}" $oldbbl
+    latexpand new/"$main" > new/"$mainbase"-fl.tex "${latexpand[@]}" $newbbl
+    verbose_done
+    verbose "Running latexdiff ${latexdiffopt[@]} old/"$mainbase"-fl.tex new/"$mainbase"-fl.tex > ./diff.tex"
+    latexdiff "${latexdiffopt[@]}" old/"$mainbase"-fl.tex new/"$mainbase"-fl.tex > diff.tex || die "latexdiff failed"
+    verbose_done
+    verbose "mv ./diff.tex new/$mainbase-fl.tex"
+    mv -f new/"$mainbase"-fl.tex new/"$mainbase"-fl.tex.orig
+    mv -f diff.tex new/"$main"
+    verbose_done
+else
+    verbose "Running latexdiff ${latexdiffopt[@]} old/$main new/$main > ./diff.tex"
+    latexdiff "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
+    verbose_done
+    verbose "mv ./diff.tex new/$main"
+    mv -f new/"$main" new/"$main.orig"
+    mv -f diff.tex new/"$main"
+    verbose_done
+fi
 
 verbose "Compiling result"
 
