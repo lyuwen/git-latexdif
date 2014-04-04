@@ -98,6 +98,7 @@ Options:
     -*                    other options are passed directly to latexdiff
     --bbl                 shortcut to flatten a bbl file of the same name as the project
     --latexpand           pass options to lastexpand (should be last option specified)
+    --latexdiff-flatten   use --flatten from latexdiff instead of latexpand
 EOF
 }
 
@@ -152,6 +153,7 @@ latexdiffopt=()
 latexpand=()
 workingdir=()
 bbl=0
+latexdiff_flatten=0
 
 while test $# -ne 0; do
     case "$1" in
@@ -235,6 +237,10 @@ while test $# -ne 0; do
 	    ;;
 	"--bbl")
 	    bbl=1
+	    ;;
+	"--latexdiff-flatten")
+	    latexdiff_flatten=1
+        flatten=0
 	    ;;
 	"--latexopt")
 	    shift
@@ -429,6 +435,14 @@ done
 mainbase=$(basename "$main" .tex)
 maindir=$(dirname "$main")
 
+# Option to use latexdiff --flatten instead of latexpand
+# Todo: Ideally dependend on whether latexpand is present or not
+# Todo: Include warning if --bbl or other latexpand commands are used.
+if test "$latexdiff_flatten" = 1; then
+    latexdiffopt+=("--flatten")
+fi
+
+# Shortcut to include bbl
 if test "$bbl" = 1; then
 	oldbbl=("--expand-bbl old/"$mainbase".bbl")
 	newbbl=("--expand-bbl new/"$mainbase".bbl")
