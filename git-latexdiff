@@ -538,6 +538,8 @@ fi
 case "$cleanup" in
     "all")
 	verbose "Cleaning-up result"
+	cd ..
+    cd ..
 	rm -fr "$tmpdir"
 	verbose_done
 	;;
