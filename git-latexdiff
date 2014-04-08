@@ -331,6 +331,15 @@ case "$view" in
 	;;
 esac
 
+if test $flatten = 1 &&
+    ! command -v latexpand 2>/dev/null; then
+    echo "Warning: latexpand not found. Falling back to latexdiff --flatten."
+    latexdiff_flatten=1
+    flatten=0
+fi
+
+## end option parsing ##
+
 check_knitr () {
     if test -z "$prepare_cmd"; then
 	prepare_cmd="Rscript -e \"library(knitr); knit('$main')\""
@@ -438,8 +447,6 @@ mainbase=$(basename "$main" .tex)
 maindir=$(dirname "$main")
 
 # Option to use latexdiff --flatten instead of latexpand
-# Todo: Ideally dependend on whether latexpand is present or not
-# Todo: Include warning if --bbl or other latexpand commands are used.
 if test "$latexdiff_flatten" = 1; then
     latexdiffopt+=("--flatten")
 fi
