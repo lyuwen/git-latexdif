@@ -455,8 +455,16 @@ fi
 # Create flattened documents and keep for debugging
 if test "$flatten" = 1; then
     verbose "Running latexpand"
-    latexpand old/"$main" > old/"$mainbase"-fl.tex "${latexpand[@]}" $oldbbl
-    latexpand new/"$main" > new/"$mainbase"-fl.tex "${latexpand[@]}" $newbbl
+    (
+	cd old/"$maindir" &&
+	latexpand "$mainbase".tex "${latexpand[@]}" $oldbbl
+    ) > old/"$mainbase"-fl.tex \
+	|| die "latexpand failed for old version"
+    (
+	cd new/"$maindir" &&
+	latexpand "$mainbase".tex "${latexpand[@]}" $newbbl
+    ) > new/"$mainbase"-fl.tex \
+	|| die "latexpand failed for new version"
     verbose_done
 
     verbose "Running latexdiff ${latexdiffopt[@]} old/"$mainbase"-fl.tex new/"$mainbase"-fl.tex > ./diff.tex"
