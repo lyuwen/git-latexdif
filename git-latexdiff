@@ -393,6 +393,7 @@ cd "$tmpdir" || die "Cannot cd to $tmpdir"
 mkdir old new || die "Cannot create old and new directories."
 
 verbose_done
+verbose_say "Temporary directories: $tmpdir/old and $tmpdir/new"
 verbose "Checking out old and new version"
 
 cd old || die "Cannot cd to old/"
