@@ -13,8 +13,9 @@
 # revisions of a LaTeX file.
 #
 # The script internally checks out the full tree for the specified
-# revisions, and calls latexdiff with the --flatten option, hence this
-# works if the document is split into multiple .tex files.
+# revisions, calls latexpand to flatten the document and then calls
+# latexdiff, hence this works if the document is split into multiple
+# .tex files.
 #
 # Try "git latexdiff -h" for more information.
 #
@@ -240,7 +241,7 @@ while test $# -ne 0; do
 	    ;;
 	"--latexdiff-flatten")
 	    latexdiff_flatten=1
-        flatten=0
+            flatten=0
 	    ;;
 	"--latexopt")
 	    shift
@@ -444,11 +445,11 @@ fi
 
 # Shortcut to include bbl
 if test "$bbl" = 1; then
-	oldbbl=("--expand-bbl old/"$mainbase".bbl")
-	newbbl=("--expand-bbl new/"$mainbase".bbl")
+    oldbbl=("--expand-bbl old/"$mainbase".bbl")
+    newbbl=("--expand-bbl new/"$mainbase".bbl")
 else
-	oldbbl=("")
-	newbbl=("")
+    oldbbl=("")
+    newbbl=("")
 fi
 
 # Create flattened documents and keep for debugging
@@ -457,17 +458,22 @@ if test "$flatten" = 1; then
     latexpand old/"$main" > old/"$mainbase"-fl.tex "${latexpand[@]}" $oldbbl
     latexpand new/"$main" > new/"$mainbase"-fl.tex "${latexpand[@]}" $newbbl
     verbose_done
+
     verbose "Running latexdiff ${latexdiffopt[@]} old/"$mainbase"-fl.tex new/"$mainbase"-fl.tex > ./diff.tex"
-    latexdiff "${latexdiffopt[@]}" old/"$mainbase"-fl.tex new/"$mainbase"-fl.tex > diff.tex || die "latexdiff failed"
+    latexdiff "${latexdiffopt[@]}" old/"$mainbase"-fl.tex new/"$mainbase"-fl.tex > diff.tex \
+	|| die "latexdiff failed"
     verbose_done
+
     verbose "mv ./diff.tex new/$mainbase-fl.tex"
     mv -f new/"$mainbase"-fl.tex new/"$mainbase"-fl.tex.orig
     mv -f diff.tex new/"$main"
     verbose_done
 else
     verbose "Running latexdiff ${latexdiffopt[@]} old/$main new/$main > ./diff.tex"
-    latexdiff "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex || die "latexdiff failed"
+    latexdiff "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex \
+	|| die "latexdiff failed"
     verbose_done
+
     verbose "mv ./diff.tex new/$main"
     mv -f new/"$main" new/"$main.orig"
     mv -f diff.tex new/"$main"
@@ -539,7 +545,7 @@ case "$cleanup" in
     "all")
 	verbose "Cleaning-up result"
 	cd ..
-    cd ..
+	cd ..
 	rm -fr "$tmpdir"
 	verbose_done
 	;;
