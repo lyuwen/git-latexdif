@@ -95,6 +95,8 @@ Options:
     --subtree             checkout the tree at and below the main file
                              (enabled by default, disable with --whole-tree)
     --whole-tree          checkout the whole tree (contrast with --subtree)
+    --ignore-latex-errors keep on going even if latex gives errors, so long as
+                          a PDF file is produced
     --ignore-makefile     ignore the Makefile, build as though it doesn't exist
     -*                    other options are passed directly to latexdiff
     --bbl                 shortcut to flatten a bbl file of the same name as the project
@@ -150,6 +152,7 @@ uselatexmk=
 latexopt=
 ln_untracked=0
 quiet=0
+ignorelatexerrors=0
 latexdiffopt=()
 latexpand=()
 workingdir=()
@@ -178,6 +181,9 @@ while test $# -ne 0; do
 	    ;;
 	"--no-cleanup")
 	    cleanup=none
+	    ;;
+	"--ignore-latex-errors")
+	    ignorelatexerrors=1
 	    ;;
         "--cleanup")
             shift
@@ -505,7 +511,9 @@ if test -f Makefile && test "$ignoremake" != 1 ; then
 elif test "$uselatexmk" = 1; then
     log_cmd latexmk.log latexmk -f -pdf -silent "$mainbase" || compile_error=1
 else
-    if [ "$quiet" = 1 ]; then
+    if [ "$ignorelatexerrors" = 1 ]; then
+	latexopt="$latexopt -interaction=batchmode"
+    elif [ "$quiet" = 1 ]; then
 	latexopt="$latexopt -interaction=nonstopmode"
     else
 	latexopt="$latexopt -interaction=errorstopmode"
@@ -522,6 +530,11 @@ else
 fi
 
 verbose_done
+
+if [ "$compile_error" = 1 ] && [ "$ignorelatexerrors" = 1 ]; then
+    echo "LaTeX errors were found - but attempting to carry on."
+    compile_error=0
+fi
 
 pdffile="$mainbase".pdf
 if test ! -r "$pdffile" ; then
