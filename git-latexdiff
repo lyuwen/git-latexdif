@@ -459,24 +459,46 @@ fi
 
 # Shortcut to include bbl
 if test "$bbl" = 1; then
-    oldbbl=("--expand-bbl old/"$mainbase".bbl")
-    newbbl=("--expand-bbl new/"$mainbase".bbl")
+    bblexpand=("--expand-bbl "$mainbase".bbl")
 else
-    oldbbl=("")
-    newbbl=("")
+    bblexpand=("")
 fi
 
 # Create flattened documents and keep for debugging
 if test "$flatten" = 1; then
+    if [ "$bbl" = 1 ]; then
+	if [ ! -f "old/"$maindir$mainbase".bbl" ]; then
+	    verbose "Attempting to regenerate missing old/"$maindir$mainbase".bbl"
+	    (
+		cd old/"$maindir"
+		log_cmd pdflatex0.log pdflatex $latexopt "$mainbase" || compile_error=1
+		log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
+	    )
+	    if [ "$compile_error" = 1 ]; then
+		die "Failed to regenerate .bbl for old version"
+	    fi
+	fi
+	if [ ! -f "new/"$maindir$mainbase".bbl" ]; then
+	    verbose "Attempting to regenerate missing new/"$maindir$mainbase".bbl"
+	    (
+		cd new/"$maindir"
+		log_cmd pdflatex0.log pdflatex $latexopt "$mainbase" || compile_error=1
+		log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
+	    )
+	    if [ "$compile_error" = 1 ]; then
+		die "Failed to regenerate .bbl for new version"
+	    fi
+	fi
+    fi
     verbose "Running latexpand"
     (
 	cd old/"$maindir" &&
-	latexpand "$mainbase".tex "${latexpand[@]}" $oldbbl
+	latexpand "$mainbase".tex "${latexpand[@]}" $bblexpand
     ) > old-"$mainbase"-fl.tex \
 	|| die "latexpand failed for old version"
     (
 	cd new/"$maindir" &&
-	latexpand "$mainbase".tex "${latexpand[@]}" $newbbl
+	latexpand "$mainbase".tex "${latexpand[@]}" $bblexpand
     ) > new-"$mainbase"-fl.tex \
 	|| die "latexpand failed for new version"
     verbose_done
