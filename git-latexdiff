@@ -399,6 +399,8 @@ cd "$(git rev-parse --show-cdup)" || die "Can't cd back to repository root"
 git_dir=$(cd "$git_dir"; pwd)
 
 main=$git_prefix/$main
+mainbase=$(basename "$main" .tex)
+maindir=$(dirname "$main")
 
 tmpdir=$tmpdir_prefix/git-latexdiff.$$
 mkdir "$tmpdir" || die "Cannot create temporary directory."
@@ -413,7 +415,9 @@ verbose "Checking out old and new version"
 
 cd old || die "Cannot cd to old/"
 if test "$ln_untracked" = 1; then
-    ln -s "$initial_dir"/* .
+    (
+	mkdir -p "$maindir" && cd "$maindir" && ln -s "$initial_dir"/* .
+    )
 fi
 
 if test "$subtree" = 1; then
@@ -427,7 +431,9 @@ fi
 verbose_progress
 cd ../new || die "Cannot cd to new/"
 if test "$ln_untracked" = 1; then
-    ln -s "$initial_dir"/* .
+    (
+	mkdir -p "$maindir" && cd "$maindir" && ln -s "$initial_dir"/* .
+    )
 fi
 if test "$new" != "--"; then
     # if new == "--" then diff working dir (already there thanks to ln
@@ -448,9 +454,6 @@ do
     fi
     verbose_done
 done
-
-mainbase=$(basename "$main" .tex)
-maindir=$(dirname "$main")
 
 # Option to use latexdiff --flatten instead of latexpand
 if test "$latexdiff_flatten" = 1; then
