@@ -7,13 +7,13 @@ die () {
 }
 
 cleanup () {
-    perl -pi -e 's/Uncommited/New/g' test.tex test.bbl
+    perl -pi -e 's/Uncommited/New/g' test.tex test.bib
 }
 
 trap cleanup 2
 
-perl -pi -e 's/New/Uncommited/g' test.tex test.bbl
-oldnew="$(git rev-list HEAD -- test.tex test.bbl)"
+perl -pi -e 's/New/Uncommited/g' test.tex test.bib
+oldnew="$(git rev-list HEAD -- test.tex test.bib)"
 old=$(echo "$oldnew" | sed -n '1p')
 new=$(echo "$oldnew" | sed -n '2p')
 
