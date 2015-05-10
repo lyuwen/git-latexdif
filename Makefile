@@ -7,6 +7,7 @@ ifndef SHELL_PATH
 endif
 
 SHELL_PATH_SQ = $(subst ','\'',$(SHELL_PATH))
+GIT_LATEXDIFF_VERSION=${shell git describe --tags HEAD}
 gitexecdir_SQ = $(subst ','\'',$(gitexecdir))
 
 SCRIPT=git-latexdiff
@@ -19,5 +20,7 @@ help:
 	@echo 'Run "$(MAKE) install" to install $(SCRIPT) in gitexecdir.'
 
 install:
-	sed -e '1s|#!.*/sh|#!$(SHELL_PATH_SQ)|' $(SCRIPT) > '$(gitexecdir_SQ)/$(SCRIPT)'
+	sed -e '1s|#!.*/sh|#!$(SHELL_PATH_SQ)|' \
+	    -e 's|@GIT_LATEXDIFF_VERSION@|$(GIT_LATEXDIFF_VERSION)|' \
+	        $(SCRIPT) > '$(gitexecdir_SQ)/$(SCRIPT)'
 	chmod 755 '$(gitexecdir)/$(SCRIPT)'
