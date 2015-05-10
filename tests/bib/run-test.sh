@@ -13,9 +13,8 @@ cleanup () {
 trap cleanup 2
 
 perl -pi -e 's/New/Uncommited/g' test.tex test.bib
-oldnew="$(git rev-list HEAD -- test.tex test.bib)"
-old=$(echo "$oldnew" | sed -n '1p')
-new=$(echo "$oldnew" | sed -n '2p')
+old=b9a200a6a0c45d6c594cb3c5473edd81a7edb52c
+new=cbce899ba408849a471461bb9b5d648bf02039ef
 
 rm -f *.aux *.bbl
 echo "git latexdiff without --bbl option (should not display bibliography)"
