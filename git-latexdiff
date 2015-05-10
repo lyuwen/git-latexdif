@@ -45,7 +45,7 @@ git_latexdiff_version='@GIT_LATEXDIFF_VERSION@'
 
 git_latexdiff_compute_version () {
     if [ "$git_latexdiff_version" = '@GIT_LATEXDIFF_VERSION@' ]; then
-	(cd "$(dirname "$0")" && git describe --tags HEAD)
+	(cd "$(dirname "$0")" && git describe --tags HEAD 2>/dev/null || echo 'Unknown version')
     else
 	echo "$git_latexdiff_version"
     fi
