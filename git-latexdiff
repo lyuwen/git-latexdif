@@ -73,6 +73,7 @@ Options:
     --help                this help message
     --main <file.tex>     name of the main LaTeX file
     --no-view             don't display the resulting PDF file
+    --latex               run latex instead of pdflatex
     --bibtex, -b          run bibtex as well as latex
                              (pdflatex,bibtex,pdflatex,pdflatex)
     --biber               run BibLaTex-Biber as well as latex
@@ -175,6 +176,8 @@ latexpand=()
 workingdir=()
 bbl=0
 latexdiff_flatten=0
+latex=0
+
 
 while test $# -ne 0; do
     case "$1" in
@@ -228,6 +231,9 @@ while test $# -ne 0; do
 	    ;;
 	"-b"|"--bibtex")
 	    bibtex=1
+	    ;;
+	"--latex")
+	    latex=1
 	    ;;
 	"--biber")
 	    biber=1
@@ -360,6 +366,12 @@ if test $flatten = 1 &&
     latexdiff_flatten=1
     flatten=0
 fi
+
+if test $latex = 1; then
+    LATEX_EXEC=latex
+else
+    LATEX_EXEC=pdflatex
+fi    
 
 ## end option parsing ##
 
@@ -506,7 +518,7 @@ if test "$flatten" = 1; then
 	    verbose "Attempting to regenerate missing new/$maindir$mainbase.bbl"
 	    (
 		cd new/"$maindir"
-		log_cmd pdflatex0.log pdflatex $latexopt "$mainbase" || compile_error=1
+		log_cmd pdflatex0.log $LATEX_EXEC $latexopt "$mainbase" || compile_error=1
 		log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
 	    )
 	    if [ "$compile_error" = 1 ]; then
@@ -564,15 +576,15 @@ else
     else
 	latexopt="$latexopt -interaction=errorstopmode"
     fi
-    log_cmd pdflatex1.log pdflatex $latexopt "$mainbase" || compile_error=1
+    log_cmd pdflatex1.log $LATEX_EXEC $latexopt "$mainbase" || compile_error=1
     if test "$bibtex" = 1 ; then
 	log_cmd bibtex.log bibtex "$mainbase" || compile_error=1
     fi
     if test "$biber" = 1 ; then
 	log_cmd biber.log biber "$mainbase" || compile_error=1
     fi
-    log_cmd pdflatex2.log pdflatex $latexopt "$mainbase" || compile_error=1
-    log_cmd pdflatex3.log pdflatex $latexopt "$mainbase" || compile_error=1
+    log_cmd pdflatex2.log $LATEX_EXEC $latexopt "$mainbase" || compile_error=1
+    log_cmd pdflatex3.log $LATEX_EXEC $latexopt "$mainbase" || compile_error=1
 fi
 
 verbose_done
@@ -580,6 +592,11 @@ verbose_done
 if [ "$compile_error" = 1 ] && [ "$ignorelatexerrors" = 1 ]; then
     echo "LaTeX errors were found - but attempting to carry on."
     compile_error=0
+fi
+
+if test $latex = 1; then
+    dvips "$mainbase".dvi
+    ps2pdf "$mainbase".ps
 fi
 
 pdffile="$mainbase".pdf
