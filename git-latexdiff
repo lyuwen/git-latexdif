@@ -61,9 +61,9 @@ git_latexdiff_compute_version () {
 
 usage () {
     cat << EOF
-Usage: $(basename $0) [options] OLD [NEW]
-       $(basename $0) [options] OLD --
-       $(basename $0) [options] -- OLD
+Usage: $(basename "$0") [options] OLD [NEW]
+       $(basename "$0") [options] OLD --
+       $(basename "$0") [options] -- OLD
 Call latexdiff on two Git revisions of a file.
 
 OLD and NEW are Git revision identifiers. NEW defaults to HEAD.
@@ -122,7 +122,7 @@ EOF
 }
 
 die () {
-    echo "fatal: $@"
+    echo "fatal: $*"
     exit 1
 }
 
@@ -134,7 +134,7 @@ verbose () {
 
 verbose_progress () {
     if test "$verbose" = 1 ; then
-	printf "." "$@"
+	printf "."
     fi
 }
 
@@ -172,7 +172,6 @@ quiet=0
 ignorelatexerrors=0
 latexdiffopt=()
 latexpand=()
-workingdir=()
 bbl=0
 latexdiff_flatten=0
 
@@ -493,22 +492,22 @@ if test "$flatten" = 1; then
     if [ "$bbl" = 1 ]; then
 	if [ ! -f "old/$maindir$mainbase.bbl" ]; then
 	    verbose "Attempting to regenerate missing old/$maindir$mainbase.bbl"
-	    (
-		cd old/"$maindir"
-		log_cmd pdflatex0.log pdflatex $latexopt "$mainbase" || compile_error=1
-		log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
-	    )
+	    oldPWD=$PWD
+	    cd old/"$maindir"
+	    log_cmd pdflatex0.log pdflatex $latexopt "$mainbase" || compile_error=1
+	    log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
+	    cd "$oldPWD"
 	    if [ "$compile_error" = 1 ]; then
 		die "Failed to regenerate .bbl for old version"
 	    fi
 	fi
 	if [ ! -f "new/$maindir$mainbase.bbl" ]; then
 	    verbose "Attempting to regenerate missing new/$maindir$mainbase.bbl"
-	    (
-		cd new/"$maindir"
-		log_cmd pdflatex0.log pdflatex $latexopt "$mainbase" || compile_error=1
-		log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
-	    )
+	    oldPWD=$PWD
+	    cd new/"$maindir"
+	    log_cmd pdflatex0.log pdflatex $latexopt "$mainbase" || compile_error=1
+	    log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
+	    cd "$oldPWD"
 	    if [ "$compile_error" = 1 ]; then
 		die "Failed to regenerate .bbl for new version"
 	    fi
@@ -527,7 +526,7 @@ if test "$flatten" = 1; then
 	|| die "latexpand failed for new version"
     verbose_done
 
-    verbose "Running latexdiff ${latexdiffopt[@]} old-${mainbase}-fl.tex new-${mainbase}-fl.tex > ./diff.tex"
+    verbose "Running latexdiff ${latexdiffopt[*]} old-${mainbase}-fl.tex new-${mainbase}-fl.tex > ./diff.tex"
     latexdiff "${latexdiffopt[@]}" old-"$mainbase"-fl.tex new-"$mainbase"-fl.tex > diff.tex \
 	|| die "latexdiff failed"
     verbose_done
@@ -537,7 +536,7 @@ if test "$flatten" = 1; then
     mv -f diff.tex new/"$main"
     verbose_done
 else
-    verbose "Running latexdiff ${latexdiffopt[@]} old/$main new/$main > ./diff.tex"
+    verbose "Running latexdiff ${latexdiffopt[*]} old/$main new/$main > ./diff.tex"
     latexdiff "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex \
 	|| die "latexdiff failed"
     verbose_done
