@@ -23,4 +23,4 @@ install:
 	sed -e '1s|#!.*/sh|#!$(SHELL_PATH_SQ)|' \
 	    -e 's|@GIT_LATEXDIFF_VERSION@|$(GIT_LATEXDIFF_VERSION)|' \
 	        $(SCRIPT) > '$(gitexecdir_SQ)/$(SCRIPT)'
-	chmod 755 '$(gitexecdir)/$(SCRIPT)'
+	chmod 755 '$(gitexecdir_SQ)/$(SCRIPT)'
