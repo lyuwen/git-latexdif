@@ -49,10 +49,12 @@ set -o noclobber
 # But we protect ourselves from such a user mistake nevertheless.
 unset CDPATH
 
+# @GIT_LATEXDIFF_VERSION@ is substituted by the install script here,
+# but not within git_latexdiff_compute_version().
 git_latexdiff_version='@GIT_LATEXDIFF_VERSION@'
 
 git_latexdiff_compute_version () {
-    if [ "$git_latexdiff_version" = '@GIT_LATEXDIFF_VERSION@' ]; then
+    if [ "$git_latexdiff_version" = '@GIT_LATEXDIFF''_VERSION@' ]; then
 	(cd "$(dirname "$0")" && git describe --tags HEAD 2>/dev/null || echo 'Unknown version')
     else
 	echo "$git_latexdiff_version"
