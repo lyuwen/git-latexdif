@@ -3,7 +3,7 @@ gitexecdir = ${shell git --exec-path}
 -include ./config.mak
 
 ifndef SHELL_PATH
-	SHELL_PATH = /bin/sh
+	SHELL_PATH = /bin/bash
 endif
 
 SHELL_PATH_SQ = $(subst ','\'',$(SHELL_PATH))
@@ -20,7 +20,7 @@ help:
 	@echo 'Run "$(MAKE) install" to install $(SCRIPT) in gitexecdir.'
 
 install:
-	sed -e '1s|#!.*/sh|#!$(SHELL_PATH_SQ)|' \
+	sed -e '1s|#!.*/bash|#!$(SHELL_PATH_SQ)|' \
 	    -e 's|@GIT_LATEXDIFF_VERSION@|$(GIT_LATEXDIFF_VERSION)|' \
 	        $(SCRIPT) > '$(gitexecdir_SQ)/$(SCRIPT)'
 	chmod 755 '$(gitexecdir_SQ)/$(SCRIPT)'
