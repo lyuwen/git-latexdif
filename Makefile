@@ -2,11 +2,11 @@ gitexecdir = ${shell git --exec-path}
 
 -include ./config.mak
 
-ifndef SHELL_PATH
-	SHELL_PATH = /bin/bash
+ifndef BASH_PATH
+	BASH_PATH = /bin/bash
 endif
 
-SHELL_PATH_SQ = $(subst ','\'',$(SHELL_PATH))
+BASH_PATH_SQ = $(subst ','\'',$(BASH_PATH))
 GIT_LATEXDIFF_VERSION=${shell git describe --tags HEAD}
 gitexecdir_SQ = $(subst ','\'',$(gitexecdir))
 
@@ -16,11 +16,11 @@ SCRIPT=git-latexdiff
 help:
 	@echo 'This is the help target of the Makefile. Current configuration:'
 	@echo '  gitexecdir = $(gitexecdir_SQ)'
-	@echo '  SHELL_PATH = $(SHELL_PATH_SQ)'
+	@echo '  BASH_PATH = $(BASH_PATH_SQ)'
 	@echo 'Run "$(MAKE) install" to install $(SCRIPT) in gitexecdir.'
 
 install:
-	sed -e '1s|#!.*/bash|#!$(SHELL_PATH_SQ)|' \
+	sed -e '1s|#!.*/bash|#!$(BASH_PATH_SQ)|' \
 	    -e 's|@GIT_LATEXDIFF_VERSION@|$(GIT_LATEXDIFF_VERSION)|' \
 	        $(SCRIPT) > '$(gitexecdir_SQ)/$(SCRIPT)'
 	chmod 755 '$(gitexecdir_SQ)/$(SCRIPT)'
