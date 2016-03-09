@@ -19,8 +19,14 @@ SCRIPT=git-latexdiff
 help:
 	@echo 'This is the help target of the Makefile. Current configuration:'
 	@echo '  gitexecdir = $(gitexecdir_SQ)'
+	@echo '  gitmanpath = $(gitmanpath_SQ)'
 	@echo '  BASH_PATH = $(BASH_PATH_SQ)'
+	@echo '  git-latexdiff version: $(GIT_LATEXDIFF_VERSION)'
 	@echo 'Run "$(MAKE) install" to install $(SCRIPT) in gitexecdir.'
+	@echo 'Other available targets'
+	@echo '  - make git-latexdiff.1: generate the manpage without installing'
+	@echo '  - make install-bin: install only the script'
+	@echo '  - make install-doc: install only the man page'
 
 install: install-bin install-doc
 
