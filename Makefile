@@ -8,7 +8,8 @@ ifndef BASH_PATH
 endif
 
 BASH_PATH_SQ = $(subst ','\'',$(BASH_PATH))
-GIT_LATEXDIFF_VERSION=${shell git describe --tags HEAD}
+GIT_LATEXDIFF_VERSION=${shell git describe --tags HEAD 2>/dev/null || \
+			 echo unknown-version}
 gitexecdir_SQ = $(subst ','\'',$(gitexecdir))
 gitmanpath_SQ = $(subst ','\'',$(gitmanpath))
 
