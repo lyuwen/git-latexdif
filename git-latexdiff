@@ -41,6 +41,12 @@
 set -o errexit
 set -o noclobber
 
+# Some versions of git set $GIT_WORK_TREE when ran through an alias.
+# This wouldn't work with git-latexdiff which plays with different
+# work trees.
+unset GIT_DIR
+unset GIT_WORK_TREE
+
 # (Comment and 'unset' line borrowed from Git's source code)
 # Having this variable in your environment would break scripts because
 # you would cause "cd" to be taken to unexpected places.  If you
