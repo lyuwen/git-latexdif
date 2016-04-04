@@ -495,6 +495,14 @@ do
     verbose_done
 done
 
+if [ "$ignorelatexerrors" = 1 ]; then
+    latexopt="$latexopt -interaction=batchmode"
+elif [ "$quiet" = 1 ]; then
+    latexopt="$latexopt -interaction=nonstopmode"
+else
+    latexopt="$latexopt -interaction=errorstopmode"
+fi
+
 # Option to use latexdiff --flatten instead of latexpand
 if test "$latexdiff_flatten" = 1; then
     latexdiffopt+=("--flatten")
@@ -576,13 +584,6 @@ if test -f Makefile && test "$ignoremake" != 1 ; then
 elif test "$uselatexmk" = 1; then
     log_cmd latexmk.log latexmk -f -pdf -silent "$mainbase" || compile_error=1
 else
-    if [ "$ignorelatexerrors" = 1 ]; then
-	latexopt="$latexopt -interaction=batchmode"
-    elif [ "$quiet" = 1 ]; then
-	latexopt="$latexopt -interaction=nonstopmode"
-    else
-	latexopt="$latexopt -interaction=errorstopmode"
-    fi
     log_cmd pdflatex1.log $LATEX_EXEC $latexopt "$mainbase" || compile_error=1
     if test "$bibtex" = 1 ; then
 	log_cmd bibtex.log bibtex "$mainbase" || compile_error=1
