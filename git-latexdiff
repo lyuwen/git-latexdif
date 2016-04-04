@@ -532,6 +532,7 @@ if test "$flatten" = 1; then
 	    log_cmd pdflatex0.log pdflatex $latexopt "$mainbase" || compile_error=1
 	    log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
 	    cd "$oldPWD"
+	    ignore_errors_maybe
 	    if [ "$compile_error" = 1 ]; then
 		die "Failed to regenerate .bbl for old version"
 	    fi
@@ -543,6 +544,7 @@ if test "$flatten" = 1; then
 	    log_cmd pdflatex0.log $LATEX_EXEC $latexopt "$mainbase" || compile_error=1
 	    log_cmd bibtex0.log bibtex "$mainbase" || compile_error=1
 	    cd "$oldPWD"
+	    ignore_errors_maybe
 	    if [ "$compile_error" = 1 ]; then
 		die "Failed to regenerate .bbl for new version"
 	    fi
