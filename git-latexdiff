@@ -125,7 +125,8 @@ Options:
     --ignore-makefile     ignore the Makefile, build as though it doesn't exist
     -*                    other options are passed directly to latexdiff
     --bbl                 shortcut to flatten a bbl file of the same name as the project
-    --latexpand           pass options to latexpand (should be last option specified)
+    --latexpand OPT       pass option OPT to latexpand. Use multiple times like
+                          --latexpand OPT1 --latexpand OPT2 to pass multiple options.
     --latexdiff-flatten   use --flatten from latexdiff instead of latexpand
 EOF
 }
@@ -270,7 +271,7 @@ while test $# -ne 0; do
             ;;
 	"--latexpand")
 	    shift
-	    latexpand=$1
+	    latexpand=("${latexpand[@]}" "$1")
 	    ;;
 	"--bbl")
 	    bbl=1
