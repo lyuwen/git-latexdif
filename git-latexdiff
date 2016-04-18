@@ -142,6 +142,10 @@ Pass --type=CHANGEBAR to latexdiff to get changebars in the margins
 instead of red+trike/blue+underline diff:
 
     git latexdiff --type=CHANGEBAR HEAD^
+
+Use a specific latexdiff configuration file:
+
+    git latexdiff --config /path/to/file HEAD^
 EOF
 }
 
@@ -322,7 +326,18 @@ while test $# -ne 0; do
                     exit 1
                 fi
             else
-                latexdiffopt+=("$1")
+		case "$1" in
+		    "-t"|"-s"|"-f"|"-e"|"-p"|"-A"|"-a"|"-X"|"-x"|"--config"|"-c"|"-L")
+			# Options taking an immediate argument in
+			# latexdiff => add both the option and its
+			# argument.
+			latexdiffopt+=("$1" "$2")
+			shift
+			;;
+		    *)
+			latexdiffopt+=("$1")
+			;;
+		esac
             fi
             ;;
         *)
