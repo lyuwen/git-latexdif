@@ -128,6 +128,15 @@ Options:
     --latexpand OPT       pass option OPT to latexpand. Use multiple times like
                           --latexpand OPT1 --latexpand OPT2 to pass multiple options.
     --latexdiff-flatten   use --flatten from latexdiff instead of latexpand
+
+Unrecognized options are passed unmodified to latexdiff.
+
+Examples:
+
+Pass --type=CHANGEBAR to latexdiff to get changebars in the margins
+instead of red+trike/blue+underline diff:
+
+    git latexdiff --type=CHANGEBAR HEAD^
 EOF
 }
 
