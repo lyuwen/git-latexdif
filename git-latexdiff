@@ -79,6 +79,7 @@ If "--" is used for NEW, then diff against the working directory.
 
 Options:
     --help                this help message
+    --help-examples       show examples of usage
     --main <file.tex>     name of the main LaTeX file
     --no-view             don't display the resulting PDF file
     --latex               run latex instead of pdflatex
@@ -130,7 +131,11 @@ Options:
     --latexdiff-flatten   use --flatten from latexdiff instead of latexpand
 
 Unrecognized options are passed unmodified to latexdiff.
+EOF
+}
 
+examples () {
+    cat <<EOF
 Examples:
 
 Pass --type=CHANGEBAR to latexdiff to get changebars in the margins
@@ -202,6 +207,10 @@ while test $# -ne 0; do
             usage
             exit 0
             ;;
+	"--help-examples")
+	    examples
+	    exit 0
+	    ;;
 	"--main")
 	    test $# -gt 1 && shift || die "missing argument for $1"
 	    main=$1

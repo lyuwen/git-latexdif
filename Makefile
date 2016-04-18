@@ -40,6 +40,7 @@ git-latexdiff.txt: git-latexdiff git-latexdiff.txt.header
 	( cat git-latexdiff.txt.header ; \
 	  printf '%s\n' ------------ ; \
 	  ./git-latexdiff --help ; \
+	  ./git-latexdiff --help-examples ; \
 	  printf '%s\n' ------------ ) > $@
 
 git-latexdiff.1: git-latexdiff.txt
