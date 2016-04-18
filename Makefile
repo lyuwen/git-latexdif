@@ -47,4 +47,4 @@ git-latexdiff.1: git-latexdiff.txt
 	a2x --doctype manpage --format manpage $<
 
 install-doc: git-latexdiff.1
-	cp $< $(gitmanpath_SQ)
+	cp $< $(gitmanpath_SQ)/man1/
