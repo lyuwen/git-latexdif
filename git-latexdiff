@@ -327,7 +327,15 @@ while test $# -ne 0; do
                 fi
             else
 		case "$1" in
-		    "-t"|"-s"|"-f"|"-e"|"-p"|"-A"|"-a"|"-X"|"-x"|"--config"|"-c"|"-L")
+		    '--type'|'-t'|'--subtype'|'-s'|'--floattype'|'-f'|\
+			'--config'|'-c'|'--preamble'|'-p'|'--encoding'|'-e'|\
+			'--label'|'-L'|'--exclude-safecmd'|'-A'|\
+			'--replace-safecmd'|'--append-safecmd'|'-a'|\
+			'--exclude-textcmd'|'-X'|'--replace-textcmd'|\
+			'--append-textcmd'|'-x'|'--replace-context1cmd'|\
+			'--append-context1cmd'|'--replace-context2cmd'|\
+			'--append-context2cmd'|'--packages'|'--math-markup'|\
+			'--driver')
 			# Options taking an immediate argument in
 			# latexdiff => add both the option and its
 			# argument.
