@@ -69,9 +69,9 @@ git_latexdiff_compute_version () {
 
 usage () {
     cat << EOF
-Usage: $(basename "$0") [options] OLD [NEW]
-       $(basename "$0") [options] OLD --
-       $(basename "$0") [options] -- OLD
+Usage: $(basename "$0" | sed 's/git-/git /') [options] OLD [NEW]
+       $(basename "$0" | sed 's/git-/git /') [options] OLD --
+       $(basename "$0" | sed 's/git-/git /') [options] -- OLD
 Call latexdiff on two Git revisions of a file.
 
 OLD and NEW are Git revision identifiers. NEW defaults to HEAD.
