@@ -466,6 +466,10 @@ if test -z "$main" ; then
     fi
 fi
 
+if test ! -r "$main" ; then
+    die "Cannot read $main."
+fi
+
 ext=${main##*\.}
 case "$ext" in
     Rnw) check_knitr ;;
@@ -473,10 +477,6 @@ case "$ext" in
     org) check_org ;;
     *) ;;
 esac
-
-if test ! -r "$main" ; then
-    die "Cannot read $main."
-fi
 
 verbose "Creating temporary directories"
 
