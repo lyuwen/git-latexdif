@@ -431,6 +431,13 @@ check_knitr () {
     main="${main%\.*}.tex"
 }
 
+check_org () {
+    if test -z "$prepare_cmd"; then
+        prepare_cmd="emacs --batch --eval \"(load \\\"~/.emacs\\\")\" \"$main\" -f org-latex-export-to-latex --kill"
+    fi
+    main="${main%\.*}.tex"
+}
+
 log_cmd () {
     log=$1
     shift
@@ -463,6 +470,7 @@ ext=${main##*\.}
 case "$ext" in
     Rnw) check_knitr ;;
     Rtex) check_knitr ;;
+    org) check_org ;;
     *) ;;
 esac
 
