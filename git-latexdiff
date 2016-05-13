@@ -116,7 +116,8 @@ Options:
     -o <file>, --output <file>
                           copy resulting PDF into <file> (usually ending with .pdf)
                           Implies "--cleanup all"
-    --tmpdirprefix        where temporary directory will be created (default: /tmp)
+    --tmpdirprefix        where temporary directory will be created (default: /tmp).
+                            Relative path will use repository root as a base
     --verbose, -v         give more verbose output
     --quiet               redirect output from subprocesses to log files
     --prepare <cmd>       run <cmd> before latexdiff (e.g. run make to generate
@@ -501,6 +502,11 @@ tmpdir=$tmpdir_prefix/git-latexdiff.$$
 mkdir "$tmpdir" || die "Cannot create temporary directory."
 
 cd "$tmpdir" || die "Cannot cd to $tmpdir"
+if test $(uname -o) = "Msys"; then
+    tmpdir=$(pwd -W)
+else
+    tmpdir=$(pwd)
+fi
 
 mkdir old new || die "Cannot create old and new directories."
 
@@ -697,6 +703,8 @@ elif [ -f "$pdffile" ]; then
     pdffile="$new_pdffile"
 fi
 
+# Change directory so nothing will keep us from cleaning
+cd "$initial_dir"
 
 if test "$view" = 1  || test "$view" = maybe  && test -z "$output" ; then
     "$PDFVIEWER" "$pdffile"
@@ -705,8 +713,6 @@ fi
 case "$cleanup" in
     "all")
 	verbose "Cleaning-up result"
-	cd ..
-	cd ..
 	rm -fr "$tmpdir"
 	verbose_done
 	;;
