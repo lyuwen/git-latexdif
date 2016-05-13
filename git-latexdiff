@@ -80,7 +80,12 @@ If "--" is used for NEW, then diff against the working directory.
 Options:
     --help                this help message
     --help-examples       show examples of usage
-    --main <file.tex>     name of the main LaTeX file
+    --main <file>         name of the main LaTeX, R Sweave,
+                            or Emacs Org mode file.
+                            The search for the only file containing 'documentclass'
+                            will be attempted, if not specified.
+                            For non-LaTeX files, a reasonable `prepare` command
+                            will be used unless explicitly provided
     --no-view             don't display the resulting PDF file
     --latex               run latex instead of pdflatex
     --bibtex, -b          run bibtex as well as latex
