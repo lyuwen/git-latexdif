@@ -641,7 +641,7 @@ cd new/"$maindir" || die "Can't cd to new/$maindir"
 if test -f Makefile && test "$ignoremake" != 1 ; then
     log_cmd make.log make || compile_error=1
 elif test "$uselatexmk" = 1; then
-    log_cmd latexmk.log latexmk -f -pdf -silent "$mainbase" || compile_error=1
+    log_cmd latexmk.log latexmk -f -pdf -silent $latexopt "$mainbase" || compile_error=1
 else
     log_cmd pdflatex1.log $LATEX_EXEC $latexopt "$mainbase" || compile_error=1
     if test "$bibtex" = 1 ; then
