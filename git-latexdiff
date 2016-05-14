@@ -489,6 +489,7 @@ git_prefix=$(git rev-parse --show-prefix)
 git_dir="$(git rev-parse --git-dir)" || die "Not a git repository?"
 cd "$(git rev-parse --show-cdup)" || die "Can't cd back to repository root"
 git_dir=$(cd "$git_dir"; pwd)
+git_worktree=$(pwd)
 
 # make main relative to git root directory
 if test -n "$git_prefix" ; then
@@ -525,15 +526,17 @@ fi
 (cd "$git_dir" && git archive --format=tar "$old" "$checkoutroot") | tar -xf -
 verbose_progress
 cd ../new || die "Cannot cd to new/"
+if test "$new" == "--"; then
+    # Copy working tree files
+    (cd "$git_worktree" && git ls-files -- "$checkoutroot" | tar -cf - -T -) | tar -xvf -
+else
+    # checkout new revision
+    (cd "$git_dir" && git archive --format=tar "$new" "$checkoutroot") | tar -xf -
+fi
 if test "$ln_untracked" = 1; then
     (
        mkdir -p "$maindir" && cd "$maindir" && ln -s "$initial_repo"/"$maindir"/* .
     )
-fi
-if test "$new" != "--"; then
-    # if new == "--" then diff working dir (already there thanks to ln
-    # -s above).
-    (cd "$git_dir" && git archive --format=tar "$new" "$checkoutroot") | tar -xf -
 fi
 verbose_progress
 cd ..
