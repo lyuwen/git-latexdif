@@ -536,8 +536,9 @@ fi
 if test "$ln_untracked" = 1; then
     (
        mkdir -p "$maindir" && cd "$maindir" && ln -s "$initial_repo"/"$maindir"/* .
-    )
+    ) || true
 fi
+
 verbose_progress
 cd ..
 
