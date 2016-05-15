@@ -515,7 +515,8 @@ verbose "Checking out old and new version"
 cd old || die "Cannot cd to old/"
 if test "$ln_untracked" = 1; then
     (
-       mkdir -p "$maindir" && cd "$maindir" && ln -s "$initial_repo"/"$maindir"/* .
+	mkdir -p "$maindir" && cd "$maindir" &&
+	    log_cmd ln-old.log ln -s "$initial_repo"/"$maindir"/* .
     )
 fi
 
@@ -531,14 +532,15 @@ verbose_progress
 cd ../new || die "Cannot cd to new/"
 if test "$new" == "--"; then
     # Copy working tree files
-    (cd "$git_worktree" && git ls-files -- "$checkoutroot" | tar -cf - -T -) | tar -xvf -
+    (cd "$git_worktree" && git ls-files -- "$checkoutroot" | tar -cf - -T -) | tar -xf -
 else
     # checkout new revision
     (cd "$git_dir" && git archive --format=tar "$new" "$checkoutroot") | tar -xf -
 fi
 if test "$ln_untracked" = 1; then
     (
-       mkdir -p "$maindir" && cd "$maindir" && ln -s "$initial_repo"/"$maindir"/* .
+	mkdir -p "$maindir" && cd "$maindir" &&
+	    log_cmd ln-new.log ln -s "$initial_repo"/"$maindir"/* .
     ) || true
 fi
 
