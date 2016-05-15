@@ -517,7 +517,7 @@ if test "$ln_untracked" = 1; then
     (
 	mkdir -p "$maindir" && cd "$maindir" &&
 	    log_cmd ln-old.log ln -s "$initial_repo"/"$maindir"/* .
-    )
+    ) || true
 fi
 
 if test "$subtree" = 1; then
