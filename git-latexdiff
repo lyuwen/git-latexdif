@@ -84,7 +84,7 @@ Options:
                             or Emacs Org mode file.
                             The search for the only file containing 'documentclass'
                             will be attempted, if not specified.
-                            For non-LaTeX files, a reasonable `prepare` command
+                            For non-LaTeX files, a reasonable \`prepare\` command
                             will be used unless explicitly provided
     --no-view             don't display the resulting PDF file
     --latex               run latex instead of pdflatex
