@@ -528,6 +528,8 @@ fi
 
 # Checkout a subtree, without touching the index ("git checkout" would)
 (cd "$git_dir" && git archive --format=tar "$old" "$checkoutroot") | tar -xf -
+# Also expand the possible submodules
+(cd "$git_worktree" && git submodule foreach 'git archive --format=tar "$sha1" | tar -xf - --directory '$tmpdir/old'/$path')
 verbose_progress
 cd ../new || die "Cannot cd to new/"
 if test "$new" == "--"; then
@@ -536,6 +538,7 @@ if test "$new" == "--"; then
 else
     # checkout new revision
     (cd "$git_dir" && git archive --format=tar "$new" "$checkoutroot") | tar -xf -
+    (cd "$git_worktree" && git submodule foreach 'git archive --format=tar "$sha1" | tar -xf - --directory '$tmpdir/new'/$path')
 fi
 if test "$ln_untracked" = 1; then
     (
