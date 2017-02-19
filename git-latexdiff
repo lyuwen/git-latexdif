@@ -40,6 +40,7 @@
 
 set -o errexit
 set -o noclobber
+shopt -s dotglob
 
 # Some versions of git set $GIT_WORK_TREE when ran through an alias.
 # This wouldn't work with git-latexdiff which plays with different
