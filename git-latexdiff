@@ -40,6 +40,8 @@
 
 set -o errexit
 set -o noclobber
+# Used when symlinking files from the working tree: symlink .* files
+# too.
 shopt -s dotglob
 
 # Some versions of git set $GIT_WORK_TREE when ran through an alias.
