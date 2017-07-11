@@ -14,8 +14,8 @@
 #
 # The script internally checks out the full tree for the specified
 # revisions, calls latexpand to flatten the document and then calls
-# latexdiff, hence this works if the document is split into multiple
-# .tex files.
+# latexdiff-so (if available, otherwise latexdiff). Therefore,
+# this works if the document is split into multiple .tex files.
 #
 # Try "git latexdiff -h" for more information.
 #
@@ -39,6 +39,7 @@
 # Ideally, these scripts should be merged.
 
 set -o errexit
+set -o pipefail
 set -o noclobber
 # Used when symlinking files from the working tree: symlink .* files
 # too.
@@ -426,7 +427,7 @@ if test $latex = 1; then
     LATEX_EXEC=latex
 else
     LATEX_EXEC=pdflatex
-fi    
+fi
 
 ## end option parsing ##
 
@@ -483,6 +484,17 @@ case "$ext" in
     org) check_org ;;
     *) ;;
 esac
+
+# Set LATEXDIFF_EXEC to either latexdiff or latexdiff-so. Prefer
+# latexdiff-so if available.
+if command -v latexdiff-so >/dev/null 2>&1; then
+    LATEXDIFF_EXEC=latexdiff-so
+elif command -v latexdiff >/dev/null 2>&1; then
+    LATEXDIFF_EXEC=latexdiff
+else
+    die "latexdiff-so and latexdiff couldn't be found. Check your PATH."
+fi
+verbose_done "$LATEXDIFF_EXEC"
 
 verbose "Creating temporary directories"
 
@@ -633,9 +645,9 @@ if test "$flatten" = 1; then
 	|| die "latexpand failed for new version"
     verbose_done
 
-    verbose "Running latexdiff ${latexdiffopt[*]} old-${mainbase}-fl.tex new-${mainbase}-fl.tex > ./diff.tex"
-    latexdiff "${latexdiffopt[@]}" old-"$mainbase"-fl.tex new-"$mainbase"-fl.tex > diff.tex \
-	|| die "latexdiff failed"
+    verbose "Running $LATEXDIFF_EXEC ${latexdiffopt[*]} old-${mainbase}-fl.tex new-${mainbase}-fl.tex > ./diff.tex"
+    "$LATEXDIFF_EXEC" "${latexdiffopt[@]}" old-"$mainbase"-fl.tex new-"$mainbase"-fl.tex > diff.tex \
+	|| die "$LATEXDIFF_EXEC failed"
     verbose_done
 
     verbose "mv ./diff.tex new/$main"
@@ -643,9 +655,9 @@ if test "$flatten" = 1; then
     mv -f diff.tex new/"$main"
     verbose_done
 else
-    verbose "Running latexdiff ${latexdiffopt[*]} old/$main new/$main > ./diff.tex"
-    latexdiff "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex \
-	|| die "latexdiff failed"
+    verbose "Running $LATEXDIFF_EXEC ${latexdiffopt[*]} old/$main new/$main > ./diff.tex"
+    "$LATEXDIFF_EXEC" "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex \
+	|| die "$LATEXDIFF_EXEC failed"
     verbose_done
 
     verbose "mv ./diff.tex new/$main"
