@@ -535,7 +535,7 @@ if test "$ln_untracked" = 1; then
     ) || true
 fi
 
-if test "$subtree" = 1; then
+if test "$subtree" = 1 && test -n "$git_prefix"; then
     checkoutroot=$git_prefix
 else
     checkoutroot="."
