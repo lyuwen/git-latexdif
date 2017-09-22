@@ -198,7 +198,6 @@ bibtex=0
 biber=0
 output=
 initial_dir=$PWD
-initial_repo=$(git rev-parse --show-toplevel)
 tmpdir_prefix="/tmp"
 prepare_cmd=
 flatten=1
@@ -376,6 +375,8 @@ while test $# -ne 0; do
     esac
     shift
 done
+
+initial_repo=$(git rev-parse --show-toplevel)
 
 if test -z "$new" ; then
     new=HEAD
