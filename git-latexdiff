@@ -718,7 +718,8 @@ fi
 if test -n "$output" ; then
     abs_pdffile="$PWD/$pdffile"
     (cd "$initial_dir" && mv "$abs_pdffile" "$output")
-    echo "Output written on $output"
+    pdffile="$output"
+    echo "Output written on $pdffile"
 elif [ -f "$pdffile" ]; then
     new_pdffile="$tmpdir"/"$pdffile"
     mv "$pdffile" "$new_pdffile"
@@ -728,7 +729,7 @@ fi
 # Change directory so nothing will keep us from cleaning
 cd "$initial_dir"
 
-if test "$view" = 1  || test "$view" = maybe  && test -z "$output" ; then
+if test "$view" = 1 || ( test "$view" = maybe  && test -z "$output" ) ; then
     "$PDFVIEWER" "$pdffile"
 fi
 
