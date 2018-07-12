@@ -673,6 +673,8 @@ compile_error=0
 cd new/"$maindir" || die "Can't cd to new/$maindir"
 if test -f Makefile && test "$ignoremake" != 1 ; then
     log_cmd make.log make || compile_error=1
+elif test -f SConstruct && test "$ignoremake" != 1 ; then
+    log_cmd make.log scons || compile_error=1
 elif test "$uselatexmk" = 1; then
     log_cmd latexmk.log latexmk -f -pdf -silent $latexopt "$mainbase" || compile_error=1
 else
