@@ -52,3 +52,16 @@ To get the documentation, you need to generate it:
 
 and then copy `git-latexdiff.1` in your man-path (run `git --man-path`
 to get the location).
+
+Documentation
+-------------
+
+The documentation is available through these commands:
+
+    git-latexdiff -h
+    git-latexdiff --help-examples
+
+If you installed the manpage properly, you can get the same
+documentation with:
+
+    man git-latexdiff
