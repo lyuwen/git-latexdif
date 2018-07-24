@@ -148,6 +148,18 @@ examples () {
     cat <<EOF
 Examples:
 
+Diff the previous revision with the latest commit:
+
+    git latexdiff HEAD^
+
+Diff the latest commit with the working tree:
+
+    git latexdiff HEAD --
+
+Diff latest commit with branch master:
+
+    git latexdiff master HEAD
+
 Pass --type=CHANGEBAR to latexdiff to get changebars in the margins
 instead of red+trike/blue+underline diff:
 
