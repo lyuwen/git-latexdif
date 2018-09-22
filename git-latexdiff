@@ -92,6 +92,7 @@ Options:
                             will be used unless explicitly provided
     --no-view             don't display the resulting PDF file
     --latex               run latex instead of pdflatex
+    --xelatex             run xelatex instead of pdflatex
     --bibtex, -b          run bibtex as well as latex
                              (pdflatex,bibtex,pdflatex,pdflatex)
     --biber               run BibLaTex-Biber as well as latex
@@ -224,6 +225,7 @@ latexpand=()
 bbl=0
 latexdiff_flatten=0
 latex=0
+xelatex=0
 
 
 while test $# -ne 0; do
@@ -286,6 +288,9 @@ while test $# -ne 0; do
 	"--latex")
 	    latex=1
 	    ;;
+	"--xelatex")
+            xelatex=1
+            ;;
 	"--biber")
 	    biber=1
 	    ;;
@@ -438,6 +443,8 @@ fi
 
 if test $latex = 1; then
     LATEX_EXEC=latex
+elif test $xelatex = 1; then
+    LATEX_EXEC=xelatex
 else
     LATEX_EXEC=pdflatex
 fi
