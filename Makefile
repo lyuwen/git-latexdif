@@ -8,9 +8,9 @@ ifndef BASH_PATH
 endif
 
 # a2x sometimes need $XML_CATALOG_FILES to be set. If a2x fails, retry
-# with XML_CATALOG_FILES set to these directories, if they exist. See
+# with XML_CATALOG_FILES set to these files, if they exist. See
 # https://gitlab.com/git-latexdiff/git-latexdiff/issues/35#note_119280499
-XML_CATALOG_DIRS = /usr/local/etc/xml/catalog
+TRY_XML_CATALOG_FILES = /usr/local/etc/xml/catalog
 
 BASH_PATH_SQ = $(subst ','\'',$(BASH_PATH))
 GIT_LATEXDIFF_VERSION=${shell git describe --tags HEAD 2>/dev/null || \
@@ -51,10 +51,10 @@ git-latexdiff.txt: git-latexdiff git-latexdiff.txt.header
 
 git-latexdiff.1: git-latexdiff.txt
 	a2x --doctype manpage --format manpage $< || { \
-		for d in $(XML_CATALOG_DIRS); do \
-			if [ -d $$d ]; then \
-				echo "a2x failed, retrying with XML_CATALOG_FILES=$$d" ;\
-				XML_CATALOG_FILES=$$d \
+		for f in $(TRY_XML_CATALOG_FILES); do \
+			if [ -f $$f ]; then \
+				echo "a2x failed, retrying with XML_CATALOG_FILES=$$f" ;\
+				XML_CATALOG_FILES=$$f \
 				a2x --doctype manpage --format manpage $< && exit 0; \
 			fi ; \
 		done ; \
