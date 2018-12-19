@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Main author: Matthieu Moy <Matthieu.Moy@imag.fr> (2012 - 2017)
+# Main author: Matthieu Moy <git@matthieu-moy.fr> (2012 - 2018)
 # (See the Git history for other contributors)
 #
 # Copying and distribution of this file, with or without modification,
@@ -92,6 +92,7 @@ Options:
                             will be used unless explicitly provided
     --no-view             don't display the resulting PDF file
     --latex               run latex instead of pdflatex
+    --xelatex             run xelatex instead of pdflatex
     --bibtex, -b          run bibtex as well as latex
                              (pdflatex,bibtex,pdflatex,pdflatex)
     --biber               run BibLaTex-Biber as well as latex
@@ -147,6 +148,18 @@ EOF
 examples () {
     cat <<EOF
 Examples:
+
+Diff the previous revision with the latest commit:
+
+    git latexdiff HEAD^
+
+Diff the latest commit with the working tree:
+
+    git latexdiff HEAD --
+
+Diff latest commit with branch master:
+
+    git latexdiff master HEAD
 
 Pass --type=CHANGEBAR to latexdiff to get changebars in the margins
 instead of red+trike/blue+underline diff:
@@ -212,6 +225,7 @@ latexpand=()
 bbl=0
 latexdiff_flatten=0
 latex=0
+xelatex=0
 
 
 while test $# -ne 0; do
@@ -274,6 +288,9 @@ while test $# -ne 0; do
 	"--latex")
 	    latex=1
 	    ;;
+	"--xelatex")
+            xelatex=1
+            ;;
 	"--biber")
 	    biber=1
 	    ;;
@@ -426,6 +443,8 @@ fi
 
 if test $latex = 1; then
     LATEX_EXEC=latex
+elif test $xelatex = 1; then
+    LATEX_EXEC=xelatex
 else
     LATEX_EXEC=pdflatex
 fi
