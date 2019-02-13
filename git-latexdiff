@@ -117,6 +117,7 @@ Options:
                                   deleted.
 
     --latexmk             use latexmk
+    --build-dir           use pdfs from specific build directory
     --latexopt            pass additional options to latex (e.g. -shell-escape)
     -o <file>, --output <file>
                           copy resulting PDF into <file> (usually ending with .pdf)
@@ -216,6 +217,7 @@ prepare_cmd=
 flatten=1
 subtree=1
 uselatexmk=
+use_build_dir=
 latexopt=
 ln_untracked=0
 quiet=0
@@ -314,6 +316,10 @@ while test $# -ne 0; do
 	    shift
 	    prepare_cmd="$1"
 	    ;;
+        "--build-dir")
+	    test $# -gt 1 && shift || die "missing argument for $1"
+	    use_build_dir=$1
+            ;;
         "--latexmk")
             uselatexmk=1
             ;;
@@ -531,6 +537,13 @@ fi
 mainbase=$(basename "$main" .tex)
 maindir=$(dirname "$main")
 
+# create the build directory (containing the final PDFs) if the param was set
+if test -n "$use_build_dir" ; then
+    builddir="$maindir/$use_build_dir"
+else
+    builddir="$maindir"
+fi
+
 tmpdir=$tmpdir_prefix/git-latexdiff.$$
 mkdir "$tmpdir" || die "Cannot create temporary directory."
 
@@ -715,7 +728,7 @@ if test $latex = 1; then
     ps2pdf "$mainbase".ps
 fi
 
-pdffile="$mainbase".pdf
+pdffile="$builddir/$mainbase".pdf
 if test ! -r "$pdffile" ; then
     echo "No PDF file generated."
     compile_error=1
